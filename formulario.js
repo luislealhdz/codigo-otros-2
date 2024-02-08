@@ -1,97 +1,127 @@
-var formulario = document.querySelector("#form")
+const form = document.querySelector(".formulario");
+const showGuestListSelector = document.querySelector("#guestList");
 
-formulario.onsubmit = function(e) {
+const getValueById = (id) => document.querySelector(`#${id}`).value;
 
-  e.prevent();
-  
-  var n = formulario.elements[0]
-  var e = formulario.elements[1]
-  var na = formulario.elements[2]
+const showError = (id) =>
+    document.querySelector(`#${id}`).classList.add("error");
 
-  var nombre = n.value
-  var edad = e.value
+const getNationality = (nationality) => {
+    const notFoundNationality = "No se reconoce esta nacionalidad";
 
-  var i = na.selectedIndex
-  var nacionalidad = na.options[i].value
-  console.log(nombre, edad)
-  console.log(nacionalidad)
+    const nationlities = {
+        ar: "Argentina",
+        mx: "Mexicana",
+        vnzl: "Venezolana",
+        per: "Peruana",
+    };
 
-  if (nombre.length === 0) {
-    n.classList.add("error")
-  }
-  if (edad < 18 || edad > 120) {
-    e.classList.add("error")
-  }
+    return nationlities[nationality] ?? notFoundNationality;
+};
 
-if (nombre.length > 0 
-  && (edad > 18 
-    && edad < 120) ) {
-  agregarInvitado(nombre, edad, nacionalidad)
-  }
-}
+const guestList = [];
 
-var botonBorrar = document.createElement("button")
-botonBorrar.textContent = "Eliminar invitado"
-botonBorrar.id = "boton-borrar"
-var corteLinea = document.createElement("br")
-document.body.appendChild(corteLinea)
+var botonBorrar = document.createElement("button");
+botonBorrar.textContent = "Eliminar invitado";
+botonBorrar.id = "boton-borrar";
+var corteLinea = document.createElement("br");
+document.body.appendChild(corteLinea);
 document.body.appendChild(botonBorrar);
 
+const createItemGuestList = (description, value) => {
+    const card = document.createElement("article");
+    const spanName = document.createElement("span");
+    const inputName = document.createElement("input");
+    const separation = document.createElement("br");
+    spanName.textContent = description + ": ";
+    inputName.value = value;
+    card.appendChild(spanName);
+    card.appendChild(inputName);
+    card.appendChild(separation);
+    showGuestListSelector.appendChild(card);
+};
+
+const addGuest = (guestName, age, nationality) => {
+    guestList.push({
+        guestName,
+        age,
+        nationality: getNationality(nationality),
+    });
+};
+
+const showGuestList = () => {
+    showGuestListSelector.innerHTML = "";
+    guestList.forEach((guest) => {
+        const { guestName, age, nationality } = guest;
+
+        createItemGuestList("Nombre", guestName);
+        createItemGuestList("Edad", age);
+        createItemGuestList("Nacinalidad", nationality);
+    });
+};
+
 function agregarInvitado(nombre, edad, nacionalidad) {
+    var lista = document.getElementById("lista-de-invitados");
 
-  if (nacionalidad === "ar") {
-    nacionalidad = "Argentina"
-  }
-  else if (nacionalidad === "mx") {
-    nacionalidad = "Mexicana"
-  }
-  else if (nacionalidad === "vnzl") {
-    nacionalidad = "Venezolana"
-  }
-  else if (nacionalidad === "per") {
-    nacionalidad = "Peruana"
-  }
+    var elementoLista = document.createElement("div");
+    elementoLista.classList.add("elemento-lista");
+    lista.appendChild(elementoLista);
 
-var lista = document.getElementById("lista-de-invitados")
+    var spanNombre = document.createElement("span");
+    var inputNombre = document.createElement("input");
+    var espacio = document.createElement("br");
+    spanNombre.textContent = "Nombre: ";
+    inputNombre.value = nombre;
+    elementoLista.appendChild(spanNombre);
+    elementoLista.appendChild(inputNombre);
+    elementoLista.appendChild(espacio);
 
-var elementoLista = document.createElement("div")
-elementoLista.classList.added("elemento-lista")
-lista.appendChild(elementoLista)
+    function crearElemento(descripcion, valor) {
+        var spanNombre = document.createElement("span");
+        var inputNombre = document.createElement("input");
+        var espacio = document.createElement("br");
+        spanNombre.textContent = descripcion + ": ";
+        inputNombre.value = valor;
+        elementoLista.appendChild(spanNombre);
+        elementoLista.appendChild(inputNombre);
+        elementoLista.appendChild(espacio);
+    }
 
-var spanNombre = document.createElement("span")
-var inputNombre = document.createElement("input")
-var espacio = document.createElement("br")
-spanNombre.textContent = "Nombre: "
-inputNombre.value = nombre 
-elementoLista.appendChild(spanNombre)
-elementoLista.appendChild(inputNombre)
-elementoLista.appendChild(espacio)
+    crearElemento("Nombre", nombre);
+    crearElemento("Edad", edad);
+    crearElemento("Nacionalidad", nacionalidad);
 
-function crearElemento(descripcion, valor) {
-var spanNombre = document.createElement("span")
-var inputNombre = document.createElement("input")
-var espacio = document.createElement("br")
-spanNombre.textContent = descripcion + ": "
-inputNombre.value = valor 
-elementoLista.appendChild(spanNombre)
-elementoLista.appendChild(inputNombre)
-elementoLista.appendChild(espacio)
+    var botonBorrar = document.createElement("button");
+    botonBorrar.textContent = "Eliminar invitado";
+    botonBorrar.id = "boton-borrar";
+    var corteLinea = document.createElement("br");
+    elementoLista.appendChild(corteLinea);
+    elementoLista.appendChild(botonBorrar);
+
+    botonBorrar.onclick = function() {
+        // this.parentNode.style.display = 'none';
+        botonBorrar.parentNode.remove();
+    };
 }
 
-crearElemento("Nombre", nombre)
-crearElemento("Edad", edad)
-crearElemento("Nacionalidad", nacionalidad)
+form.addEventListener("submit", (event) => {
+    event.preventDefault();
 
+    const guestName = getValueById("name");
+    const age = getValueById("age");
+    const nationality = getValueById("nationality");
 
-var botonBorrar = document.createElement("button")
-botonBorrar.textContent = "Eliminar invitado"
-botonBorrar.id = "boton-borrar"
-var corteLinea = document.createElement("br")
-elementoLista.appendChild(corteLinea)
-elementoLista.appendChild(botonBorrar);
+    if (guestName.length === 0) {
+        showError("name");
+    }
 
- botonBorrar.onclick = function() {
-// this.parentNode.style.display = 'none';
-botonBorrar.parentNode.remove()
-  }
-}
+    if (age < 18 || age > 120) {
+        showError("age");
+    }
+
+    if (guestName.length > 0 && age > 18 && age < 120) {
+        addGuest(guestName, age, nationality);
+    }
+
+    showGuestList();
+});
